@@ -147,7 +147,7 @@ export const vivoGameDef: GameDefinition = {
       category: 'knowledge_check', format: 'multiple_choice',
       grading: 'static', correct_value: 'separate_people', role_target: 'vivo',
       prompt: 'Recall how this deal reached you: the first round of talks ended badly, and each company replaced its lead negotiator before this round. When you sit down, the ADS negotiator opens by pushing hard on price and sounds rigid and combative. Which response best serves your goal of getting a good agreement?',
-      placeholder: '', order: 11, hidden: false, deletable: false,
+      placeholder: '', order: 13, hidden: false, deletable: false,
       options: [
         { value: 'bad_faith',       label: 'Conclude that ADS is negotiating in bad faith — the last round already failed, and this confirms they are difficult — and harden your own position to match.' },
         { value: 'separate_people', label: 'Treat the hard opening as information about the problem, not the person: assume ADS faces real pressures of its own, keep the relationship cordial, and steer the talk toward the underlying business issues rather than trading personal jabs.' },
@@ -229,20 +229,37 @@ export const vivoGameDef: GameDefinition = {
       explanation: 'A tough or rigid opening is easy to read as bad faith, but that reading is usually your own fear talking, not established fact — and meeting it in kind turns the negotiation into a contest of wills that leaves value unclaimed. Separating the people from the problem — staying warm toward the negotiator while pressing firmly on the substance — keeps the door open to the trades that actually make the deal better for ADS. Blaming the person invites a defensive spiral; going silent needlessly sacrifices communication.',
     },
 
-    // ── VIVO prep / open-response (ungraded): V3, V4, V6 ──────────────────────
+    // ── VIVO graded static MC: V3, V4 (v2 — were open-response prep in v1) ─────
     {
-      field: 'prep_vivo_walkaway', type: 'text', system: false,
-      category: 'preparation', format: 'text', role_target: 'vivo',
+      field: 'kc_vivo_walkaway', type: 'mc', system: false,
+      category: 'knowledge_check', format: 'multiple_choice',
+      grading: 'static', correct_value: 'nonneg_profit', role_target: 'vivo',
       prompt: 'What is your walk-away for this negotiation?',
-      placeholder: 'Think about what makes a deal worth doing at all.',
-      order: 20, hidden: false, deletable: true,
+      placeholder: '', order: 11, hidden: false, deletable: false,
+      options: [
+        { value: 'nonneg_profit',     label: "Walk away from any agreement that leaves Vivo with an expected profit below 0; keeping in mind ADS management's desire to get a foothold in South America." },
+        { value: 'price_anchor',      label: 'Walk away from any deal in which the price paid to ADS exceeds US$32 million, the figure in the letter of intent.' },
+        { value: 'require_ownership', label: 'Walk away unless Vivo obtains ownership of the software, since that is the issue worth the most to Vivo.' },
+        { value: 'accept_any',        label: 'Accept any deal that is offered; ADS was brought in to close this, so reaching an agreement matters more than the terms.' },
+      ],
+      explanation: "Vivo's walk-away is any agreement whose expected profit to Vivo is at least 0. Management has said a positive profit is enough to proceed, so Vivo should reject any deal with negative expected profit and otherwise try to do as well as possible. Fixing on a single price anchor ignores the whole package; treating ownership as a requirement makes a costly optional issue mandatory; and accepting any offered deal abandons the walk-away altogether.",
     },
     {
-      field: 'prep_vivo_priorities', type: 'text', system: false,
-      category: 'preparation', format: 'text', role_target: 'vivo',
-      prompt: 'Going into this negotiation, what are your priorities? That is, what are the major things you hope to achieve by way of getting an agreement?',
-      placeholder: '', order: 21, hidden: false, deletable: true,
+      field: 'kc_vivo_sourcecode', type: 'mc', system: false,
+      category: 'knowledge_check', format: 'multiple_choice',
+      grading: 'static', correct_value: 'interests_escrow', role_target: 'vivo',
+      prompt: 'Going into this negotiation, your aim is to protect Vivo against being left dependent on ADS — against future price gouging or being stranded if ADS stops supporting the system. ADS may resist handing over its source code outright. Which approach is most likely to get you the protection you need?',
+      placeholder: '', order: 12, hidden: false, deletable: false,
+      options: [
+        { value: 'insist_transfer',   label: 'Insist on outright transfer of the source code and treat it as a deal-breaker; it is the only way to be sure Vivo is protected.' },
+        { value: 'interests_escrow',  label: "Focus on the protection you actually need rather than one particular form of it — and be open to an arrangement, such as the code being held by a neutral party and released to Vivo if ADS goes bankrupt, abandons support, or fails its commitments — which gives you that security while addressing ADS's concerns." },
+        { value: 'drop_issue',        label: "Drop the source-code issue to keep things friendly, and rely on ADS's goodwill if problems come up later." },
+        { value: 'chase_ownership',   label: 'Push hardest for ownership of the software instead, since it is the issue worth the most to Vivo on paper.' },
+      ],
+      explanation: "Outright transfer is a position; Vivo's underlying interest is protection against lock-in and gouging. Insisting on the position can stall the deal when the same interest can be met another way — an escrow arrangement gives Vivo the security it actually wants while letting ADS keep the code unless it fails to perform. Dropping the issue abandons the interest entirely; chasing ownership pursues the most expensive, least efficient issue (ownership costs ADS more than it is worth to Vivo) instead of the protection Vivo set out to get.",
     },
+
+    // ── VIVO prep / open-response (ungraded): V6 only ─────────────────────────
     {
       field: 'prep_vivo_multiissue', type: 'text', system: false,
       category: 'preparation', format: 'text', role_target: 'vivo',

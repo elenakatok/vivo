@@ -25,12 +25,12 @@ describe('Vivo prepDefaults — structural integrity', () => {
 })
 
 describe('Vivo prepDefaults — per-role question counts (asymmetric)', () => {
-  it('vivo: 1 gate + 2 graded MC + 3 reflection = 6 visible', () => {
+  it('vivo: 1 gate + 4 graded MC + 1 reflection = 6 visible (v2: V3/V4 now graded)', () => {
     const v = questions.filter(q => q.role_target === 'vivo' || q.role_target === 'all')
     expect(v).toHaveLength(6)
     expect(v.filter(q => q.grading === 'assigned_role' && q.system)).toHaveLength(1)
-    expect(v.filter(q => q.grading === 'static' && q.category === 'knowledge_check')).toHaveLength(2)
-    expect(v.filter(q => q.category === 'preparation')).toHaveLength(3)
+    expect(v.filter(q => q.grading === 'static' && q.category === 'knowledge_check')).toHaveLength(4)
+    expect(v.filter(q => q.category === 'preparation')).toHaveLength(1)
   })
 
   it('ads: 1 gate + 5 graded MC + 1 reflection = 7 visible', () => {
