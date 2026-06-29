@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { httpsCallable } from 'firebase/functions'
 import { signInWithCustomToken, signOut } from 'firebase/auth'
@@ -13,6 +13,15 @@ import {
   type ReportTileConfig,
   type AiTextRow,
 } from '@mygames/game-ui'
+import { SurplusScatterSVG, type ScatterPoint, type FrontierLine } from '../components/SurplusScatterSVG'
+
+// ── Four constant-joint-value Pareto frontier lines (endpoints in $M; x = Vivo, y = ADS) ──
+const VIVO_FRONTIERS: FrontierLine[] = [
+  { label: 'Pareto frontier: escrow + SLA + no ownership (joint $10M)', color: '#991b1b', points: [{ x: 10, y: 0 }, { x: 0, y: 10 }] },
+  { label: 'Full source-code transfer (else same as frontier) (joint $9M)', color: '#16a34a', points: [{ x: 9, y: 0 }, { x: 0, y: 9 }] },
+  { label: 'Ownership traded (added to frontier items) (joint $6M)',       color: '#2563eb', points: [{ x: 6, y: 0 }, { x: 0, y: 6 }] },
+  { label: 'Only install & service trade (joint $4M)',                     color: '#7c3aed', points: [{ x: 4, y: 0 }, { x: 0, y: 4 }] },
+]
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -199,6 +208,34 @@ export default function Reports() {
     })
   }, [sessionReady])
 
+  // ── Scatter data — one dot per group; X = Vivo raw, Y = ADS raw (already $M) ──
+  const scatterSvgRef = useRef<SVGSVGElement>(null)
+
+  const scatterPoints: ScatterPoint[] = (() => {
+    if (!rows) return []
+    const groupMap = new Map<number, { vivo: number | null; ads: number | null }>()
+    for (const r of rows) {
+      if (r.group_number == null || r.raw_score == null) continue
+      const entry = groupMap.get(r.group_number) ?? { vivo: null, ads: null }
+      if (r.role === 'vivo')     entry.vivo = entry.vivo ?? r.raw_score
+      else if (r.role === 'ads') entry.ads  = entry.ads  ?? r.raw_score
+      groupMap.set(r.group_number, entry)
+    }
+    return Array.from(groupMap.entries())
+      .filter(([, s]) => s.vivo !== null && s.ads !== null)
+      .map(([n, s]) => ({ x: s.vivo!, y: s.ads!, label: `G${n}` }))
+      .sort((a, b) => a.label.localeCompare(b.label))
+  })()
+
+  const projectScatter = () => {
+    if (!scatterSvgRef.current) return
+    const svgHtml = scatterSvgRef.current.outerHTML
+    const win = window.open('', 'surplus-scatter', 'width=980,height=700')
+    if (!win) return
+    win.document.write(`<!DOCTYPE html><html><head><title>Surplus Scatter — Vivo vs. ADS</title></head><body style="margin:0;padding:1rem;background:#fff;">${svgHtml}</body></html>`)
+    win.document.close()
+  }
+
   // ── Modal state ────────────────────────────────────────────────────────────
   const [contractOpen, setContractOpen] = useState(false)
   const [activeExport, setActiveExport] = useState<{ title: string; text: string } | null>(null)
@@ -217,6 +254,14 @@ export default function Reports() {
       onOpen: () => setContractOpen(true),
       disabled: !rows || rows.length === 0,
       actionLabel: 'Open ↗',
+    },
+    {
+      id: 'surplus-scatter',
+      title: 'Surplus Scatter — Vivo vs. ADS',
+      preview: <SurplusScatterSVG points={scatterPoints} frontier={VIVO_FRONTIERS} svgRef={scatterSvgRef} />,
+      onOpen: projectScatter,
+      disabled: scatterPoints.length === 0,
+      actionLabel: 'Project ↗',
     },
     ...questions.map(q => {
       const roleLabel = ROLE_LABELS[q.role_target] ?? q.role_target
