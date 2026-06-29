@@ -222,7 +222,7 @@ export function SurplusScatterSVG({
         const labelY = cy < SM.top + 22 ? cy + 18 : cy - 12
         return (
           <g key={`pt${i}`} clipPath="url(#vivo-scatter-clip)">
-            <circle cx={cx} cy={cy} r={9} fill="#2563eb" opacity={0.78} />
+            <circle cx={cx} cy={cy} r={9} fill="#1f2937" opacity={0.82} />
             <text x={cx} y={labelY} textAnchor="middle" fontSize={11} fontWeight={600} fill="#1e3a8a" fontFamily="sans-serif">
               {p.label}
             </text>
