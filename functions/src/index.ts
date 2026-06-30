@@ -61,6 +61,7 @@ export const submitKnowledgeCheck               = makeSubmitKnowledgeCheck(vivoG
 export const submitStaticKnowledgeCheckQuestion = makeSubmitStaticKnowledgeCheckQuestion(vivoGameDef)
 export const getInfoUrls                        = makeGetInfoUrls(vivoGameDef)
 export { getReportData } from './getReportData'
+export { updateGroupContract } from './updateGroupContract'
 
 // ── Non-game onRequest endpoints ──────────────────────────────────────────────
 

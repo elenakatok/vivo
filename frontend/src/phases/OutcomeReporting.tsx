@@ -9,6 +9,7 @@ import {
   FIELD_LABELS,
   formatField,
   type OutcomeField as FieldDef,
+  type OutcomeSchema,
 } from '../gameConfig'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -39,7 +40,7 @@ type Props = {
 
 // ── Schema-driven form helpers ─────────────────────────────────────────────────
 
-type FormValues = Record<string, string | boolean>
+export type FormValues = Record<string, string | boolean>
 
 function defaultFormValues(): FormValues {
   const out: FormValues = {}
@@ -55,9 +56,9 @@ function defaultFormValues(): FormValues {
 type ParseOk  = { ok: true;  outcome: OutcomeFields }
 type ParseErr = { ok: false; error: string }
 
-function parseForm(values: FormValues): ParseOk | ParseErr {
+export function parseForm(values: FormValues, schema: OutcomeSchema = vivoSchema): ParseOk | ParseErr {
   const outcome: OutcomeFields = {}
-  for (const field of vivoSchema) {
+  for (const field of schema) {
     const lbl = FIELD_LABELS[field.key] ?? field.key
     if (field.type === 'integer') {
       const raw = values[field.key] as string
@@ -102,7 +103,7 @@ function parseForm(values: FormValues): ParseOk | ParseErr {
 
 // ── Sub-component: renders one schema field as an input ────────────────────────
 
-function SchemaField({
+export function SchemaField({
   field,
   value,
   onChange,

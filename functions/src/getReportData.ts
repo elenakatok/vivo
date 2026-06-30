@@ -4,19 +4,22 @@ import type { Outcome } from '@mygames/game-engine'
 import { extractInstructorGameId } from '@mygames/game-server'
 import { computeScoreBreakdown, vivoGameDef } from './gameDefinition'
 
-const VALID_ROLES = new Set(['vivo', 'ads'])
+// Exported so updateGroupContract can build identical rows without duplicating these.
+export const VALID_ROLES = new Set(['vivo', 'ads'])
 
 // Text questions from prepDefaults — read once at module load.
-const TEXT_QUESTIONS = (vivoGameDef.prepDefaults ?? [])
+export const TEXT_QUESTIONS = (vivoGameDef.prepDefaults ?? [])
   .filter(q => q.format === 'text' && !q.hidden)
   .map(q => ({ field: q.field, prompt: q.prompt, role_target: q.role_target }))
 
-const TEXT_FIELDS = TEXT_QUESTIONS.map(q => q.field)
+export const TEXT_FIELDS = TEXT_QUESTIONS.map(q => q.field)
 
 export type ReportRow = {
   participant_id: string
   display_name: string
   group_number: number | null
+  /** Group doc id — the edit target for updateGroupContract (group_number is only a display index). */
+  group_id: string | null
   role: string
   // Negotiated contract fields.
   P: number | null
@@ -94,6 +97,7 @@ export const getReportData = onCall({ cors: vivoGameDef.corsOrigins }, async (re
         participant_id: pdoc.id,
         display_name,
         group_number: groupId ? (groupNumberMap.get(groupId) ?? null) : null,
+        group_id: groupId ?? null,
         role,
         P:   outcome ? (outcome['P']   as number)  : null,
         DEV: outcome ? (outcome['DEV'] as boolean) : null,
@@ -113,7 +117,9 @@ export const getReportData = onCall({ cors: vivoGameDef.corsOrigins }, async (re
       return a.display_name.localeCompare(b.display_name)
     })
 
-    return { ok: true as const, rows, questions: TEXT_QUESTIONS }
+    // Authoritative contract schema, straight from the game definition — the report
+    // page renders its inline editor from THIS, never the (drift-prone) client mirror.
+    return { ok: true as const, rows, questions: TEXT_QUESTIONS, schema: vivoGameDef.outcomeSchema }
   } catch (err) {
     if (err instanceof HttpsError) throw err
     console.error('[getReportData] error:', err)
