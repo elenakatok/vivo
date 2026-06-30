@@ -73,7 +73,7 @@ type SortKey = 'name' | 'group' | 'role' | 'P' | 'DEV' | 'OWN' | 'C' | 'SLA' | '
 
 const COLUMNS: readonly SortableColumn<ReportRow, SortKey>[] = [
   {
-    key: 'name', label: 'Name', headerStyle: { minWidth: 140 },
+    key: 'name', label: 'Name', headerStyle: { minWidth: 140 }, sticky: 'left',
     render: r => r.display_name,
     compare: (a, b) => a.display_name.localeCompare(b.display_name),
   },
@@ -397,13 +397,13 @@ export default function Reports() {
                 ✕
               </button>
             </div>
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ overflow: 'auto', maxHeight: 'calc(100vh - 14rem)', border: '1px solid #ddd', borderRadius: 6 }}>
               <SortableTable<ReportRow, SortKey>
                 rows={rows ?? []}
                 columns={[
                   ...COLUMNS,
                   {
-                    key: 'edit', label: '', headerStyle: { cursor: 'default' },
+                    key: 'edit', label: '', headerStyle: { cursor: 'default' }, sticky: 'right',
                     render: r => (
                       <button
                         onClick={() => openEditor(r)}
