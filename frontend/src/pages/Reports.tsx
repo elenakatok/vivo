@@ -380,7 +380,12 @@ export default function Reports() {
             onClick={e => e.stopPropagation()}
             style={{
               background: '#fff', borderRadius: 8, boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
-              width: '100%', maxWidth: 1100, padding: '1.25rem 1.5rem',
+              // Viewport-bounded so the wide table scrolls INSIDE the modal instead of
+              // stretching it: minWidth:0 lets the flex item shrink below content width
+              // (otherwise min-width:auto sizes it to the table and bleeds past screen).
+              width: '100%', maxWidth: 'min(1100px, calc(100vw - 2rem))', minWidth: 0,
+              boxSizing: 'border-box', maxHeight: 'calc(100vh - 6rem)', overflowY: 'auto',
+              padding: '1.25rem 1.5rem',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
