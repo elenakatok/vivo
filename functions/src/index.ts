@@ -11,6 +11,7 @@ import {
   makeSyncRoster,
   makeTriggerMatching,
   makeStartNegotiation,
+  makeGetGroupMemberEmails,
   makeSubmitLeadOutcome,
   makeSubmitConfirmation,
   makeSubmitInstructorOutcome,
@@ -48,6 +49,7 @@ export const getRoster              = makeGetRoster(vivoGameDef)
 export const syncRoster             = makeSyncRoster(vivoGameDef)
 export const triggerMatching            = makeTriggerMatching(vivoGameDef)
 export const startNegotiation           = makeStartNegotiation(vivoGameDef)
+export const getGroupMemberEmails      = makeGetGroupMemberEmails(vivoGameDef)
 export const submitLeadOutcome          = makeSubmitLeadOutcome(vivoGameDef)
 export const submitConfirmation         = makeSubmitConfirmation(vivoGameDef)
 export const submitInstructorOutcome    = makeSubmitInstructorOutcome(vivoGameDef)
