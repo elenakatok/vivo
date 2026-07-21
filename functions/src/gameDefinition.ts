@@ -1,5 +1,7 @@
 import type { Outcome, OutcomeSchema, RoleConfig } from '@mygames/game-engine'
 import type { GameDefinition } from '@mygames/game-server'
+// Shared latecomer joinability (Latecomer_Placement_Spec_v1 §3.1) — one predicate for all five negotiation games.
+import { negotiationIsJoinable } from '@mygames/game-server'
 
 // ── Role config ───────────────────────────────────────────────────────────────
 // Frozen role keys: 'vivo', 'ads'. Display labels: "Vivo", "ADS".
@@ -84,6 +86,9 @@ export const vivoGameDef: GameDefinition = {
   reservations: { vivo: 0, ads: 0 },
   corsOrigins: ['https://vivo.mygames.live'],
   classroom: { callbackSecretId: 'CLASSROOM_CALLBACK_SECRET' },
+  // Latecomer auto-placement (spec §3.1). Joinable = group not yet negotiating.
+  // No onPlace: negotiation placement is group_id only (audit 0b).
+  isJoinable: negotiationIsJoinable,
 
   configFields: [
     { key: 'vivo_role_name', kind: 'string', default: 'Vivo' },
